@@ -1,11 +1,25 @@
 import { useState } from "react";
+
 import api from "../../services/api";
-import "./AddTableModal.css";
 
-function AddTableModal({ closeModal, refreshTables }) {
+import "./EditTableModal.css";
 
-    const [tableNumber, setTableNumber] = useState("");
-    const [capacity, setCapacity] = useState("");
+function EditTableModal({
+
+    table,
+
+    closeModal,
+
+    refreshTables
+
+}) {
+
+    const [tableNumber, setTableNumber] = useState(table.tableNumber);
+
+    const [capacity, setCapacity] = useState(table.capacity);
+
+    const [status, setStatus] = useState(table.status);
+
     const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e) => {
@@ -16,25 +30,37 @@ function AddTableModal({ closeModal, refreshTables }) {
 
             setLoading(true);
 
-            await api.post("/admin/tables", {
+            await api.put(`/admin/tables/${table._id}`, {
+
                 tableNumber,
-                capacity: Number(capacity)
+
+                capacity,
+
+                status
+
             });
 
-            alert("Table Added Successfully");
+            alert("Table Updated Successfully");
 
             refreshTables();
 
             closeModal();
 
-        } catch (error) {
+        }
+
+        catch (error) {
 
             alert(
+
                 error.response?.data?.message ||
-                "Unable to add table."
+
+                "Unable to update table."
+
             );
 
-        } finally {
+        }
+
+        finally {
 
             setLoading(false);
 
@@ -48,7 +74,7 @@ function AddTableModal({ closeModal, refreshTables }) {
 
             <div className="modal">
 
-                <h2>Add New Table</h2>
+                <h2>Edit Table</h2>
 
                 <form onSubmit={handleSubmit}>
 
@@ -57,11 +83,11 @@ function AddTableModal({ closeModal, refreshTables }) {
                         <label>Table Number</label>
 
                         <input
-                            type="text"
+
                             value={tableNumber}
+
                             onChange={(e) => setTableNumber(e.target.value)}
-                            placeholder="Table 5"
-                            required
+
                         />
 
                     </div>
@@ -71,32 +97,81 @@ function AddTableModal({ closeModal, refreshTables }) {
                         <label>Capacity</label>
 
                         <input
+
                             type="number"
+
                             value={capacity}
-                            onChange={(e) => setCapacity(e.target.value)}
-                            placeholder="4"
-                            required
-                            min="1"
+
+                            onChange={(e) => setCapacity(Number(e.target.value))}
+
                         />
+
+                    </div>
+
+                    <div className="form-group">
+
+                        <label>Status</label>
+
+                        <select
+
+                            value={status}
+
+                            onChange={(e) => setStatus(e.target.value)}
+
+                        >
+
+                            <option>
+
+                                Available
+
+                            </option>
+
+                            <option>
+
+                                Reserved
+
+                            </option>
+
+                        </select>
 
                     </div>
 
                     <div className="modal-buttons">
 
                         <button
+
                             type="button"
+
                             className="cancel-modal-btn"
+
                             onClick={closeModal}
+
                         >
+
                             Cancel
+
                         </button>
 
                         <button
+
                             type="submit"
+
                             className="save-modal-btn"
-                            disabled={loading}
+
                         >
-                            {loading ? "Saving..." : "Save"}
+
+                            {
+
+                                loading ?
+
+                                    "Updating..."
+
+                                    :
+
+                                    "Update"
+
+                            }
+
                         </button>
 
                     </div>
@@ -111,4 +186,4 @@ function AddTableModal({ closeModal, refreshTables }) {
 
 }
 
-export default AddTableModal;
+export default EditTableModal;

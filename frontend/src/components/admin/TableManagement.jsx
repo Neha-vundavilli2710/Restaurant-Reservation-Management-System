@@ -1,158 +1,258 @@
+import { useEffect, useState } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+
+import api from "../../services/api";
+
+import AddTableModal from "./AddTableModal";
+import EditTableModal from "./EditTableModal";
 
 import "./TableManagement.css";
 
 function TableManagement() {
 
+    const [tables, setTables] = useState([]);
+
+    const [loading, setLoading] = useState(true);
+
+    const [showModal, setShowModal] = useState(false);
+
+    const [showEditModal, setShowEditModal] = useState(false);
+
+    const [selectedTable, setSelectedTable] = useState(null);
+
+    const fetchTables = async () => {
+
+        try {
+
+            setLoading(true);
+
+            const response = await api.get("/admin/tables");
+
+            setTables(response.data.tables);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert("Failed to load tables.");
+
+        }
+
+        finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    useEffect(() => {
+
+        fetchTables();
+
+    }, []);
+
+    const handleDelete = async (id) => {
+
+        const confirmDelete = window.confirm(
+            "Are you sure you want to delete this table?"
+        );
+
+        if (!confirmDelete) return;
+
+        try {
+
+            await api.delete(`/admin/tables/${id}`);
+
+            alert("Table deleted successfully.");
+
+            fetchTables();
+
+        }
+
+        catch (error) {
+
+            alert(
+                error.response?.data?.message ||
+                "Unable to delete table."
+            );
+
+        }
+
+    };
+
     return (
 
-        <section className="table-management">
+        <>
 
-            <div className="table-header">
+            <section className="table-management">
 
-                <h2>Restaurant Tables</h2>
+                <div className="table-header">
 
-                <button className="add-table-btn">
+                    <h2>Restaurant Tables</h2>
 
-                    <FaPlus />
+                    <button
+                        className="add-table-btn"
+                        onClick={() => setShowModal(true)}
+                    >
 
-                    Add Table
+                        <FaPlus />
 
-                </button>
+                        Add Table
 
-            </div>
+                    </button>
 
-            <div className="table-wrapper">
+                </div>
 
-                <table>
+                <div className="table-wrapper">
 
-                    <thead>
+                    <table>
 
-                        <tr>
+                        <thead>
 
-                            <th>Table</th>
+                            <tr>
 
-                            <th>Capacity</th>
+                                <th>Table</th>
 
-                            <th>Status</th>
+                                <th>Capacity</th>
 
-                            <th>Actions</th>
+                                <th>Status</th>
 
-                        </tr>
+                                <th>Actions</th>
 
-                    </thead>
+                            </tr>
 
-                    <tbody>
+                        </thead>
 
-                        <tr>
+                        <tbody>
 
-                            <td>Table 1</td>
+                            {
 
-                            <td>4 Seats</td>
+                                loading ?
 
-                            <td>
+                                    (
 
-                                <span className="status available">
+                                        <tr>
 
-                                    Available
+                                            <td colSpan="4">
 
-                                </span>
+                                                Loading...
 
-                            </td>
+                                            </td>
 
-                            <td className="actions">
+                                        </tr>
 
-                                <button className="edit-btn">
+                                    )
 
-                                    <FaEdit />
+                                    :
 
-                                </button>
+                                    tables.map((table) => (
 
-                                <button className="delete-btn">
+                                        <tr key={table._id}>
 
-                                    <FaTrash />
+                                            <td>
 
-                                </button>
+                                                {table.tableNumber}
 
-                            </td>
+                                            </td>
 
-                        </tr>
+                                            <td>
 
-                        <tr>
+                                                {table.capacity} Seats
 
-                            <td>Table 2</td>
+                                            </td>
 
-                            <td>6 Seats</td>
+                                            <td>
 
-                            <td>
+                                                <span
+                                                    className={
+                                                        table.status === "Available"
+                                                            ? "status available"
+                                                            : "status reserved"
+                                                    }
+                                                >
 
-                                <span className="status reserved">
+                                                    {table.status}
 
-                                    Reserved
+                                                </span>
 
-                                </span>
+                                            </td>
 
-                            </td>
+                                            <td className="actions">
 
-                            <td className="actions">
+                                                <button
+                                                    className="edit-btn"
+                                                    onClick={() => {
 
-                                <button className="edit-btn">
+                                                        setSelectedTable(table);
 
-                                    <FaEdit />
+                                                        setShowEditModal(true);
 
-                                </button>
+                                                    }}
+                                                >
 
-                                <button className="delete-btn">
+                                                    <FaEdit />
 
-                                    <FaTrash />
+                                                </button>
 
-                                </button>
+                                                <button
+                                                    className="delete-btn"
+                                                    onClick={() => handleDelete(table._id)}
+                                                >
 
-                            </td>
+                                                    <FaTrash />
 
-                        </tr>
+                                                </button>
 
-                        <tr>
+                                            </td>
 
-                            <td>Table 3</td>
+                                        </tr>
 
-                            <td>2 Seats</td>
+                                    ))
 
-                            <td>
+                            }
 
-                                <span className="status available">
+                        </tbody>
 
-                                    Available
+                    </table>
 
-                                </span>
+                </div>
 
-                            </td>
+            </section>
 
-                            <td className="actions">
+            {
 
-                                <button className="edit-btn">
+                showModal &&
 
-                                    <FaEdit />
+                <AddTableModal
 
-                                </button>
+                    closeModal={() => setShowModal(false)}
 
-                                <button className="delete-btn">
+                    refreshTables={fetchTables}
 
-                                    <FaTrash />
+                />
 
-                                </button>
+            }
 
-                            </td>
+            {
 
-                        </tr>
+                showEditModal &&
 
-                    </tbody>
+                <EditTableModal
 
-                </table>
+                    table={selectedTable}
 
-            </div>
+                    closeModal={() => setShowEditModal(false)}
 
-        </section>
+                    refreshTables={fetchTables}
+
+                />
+
+            }
+
+        </>
 
     );
 

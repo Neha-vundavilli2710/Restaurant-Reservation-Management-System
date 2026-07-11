@@ -5,9 +5,24 @@ import {
     FaSignOutAlt
 } from "react-icons/fa";
 
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+
 import "./Sidebar.css";
 
 function Sidebar() {
+
+    const navigate = useNavigate();
+
+    const { logout } = useAuth();
+
+    const handleLogout = () => {
+
+        logout();
+
+        navigate("/login");
+
+    };
 
     return (
 
@@ -23,7 +38,10 @@ function Sidebar() {
 
                 <ul>
 
-                    <li className="active">
+                    <li
+                        className="active"
+                        onClick={() => navigate("/admin")}
+                    >
 
                         <FaTachometerAlt />
 
@@ -47,7 +65,7 @@ function Sidebar() {
 
                     </li>
 
-                    <li>
+                    <li onClick={handleLogout}>
 
                         <FaSignOutAlt />
 

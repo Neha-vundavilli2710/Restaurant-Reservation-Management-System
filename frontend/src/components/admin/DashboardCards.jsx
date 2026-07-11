@@ -1,14 +1,88 @@
 import {
 
+    useEffect,
+
+    useState
+
+} from "react";
+
+import {
+
     FaUtensils,
+
     FaCheckCircle,
+
     FaCalendarAlt
 
 } from "react-icons/fa";
 
+import api from "../../services/api";
+
 import "./DashboardCards.css";
 
 function DashboardCards() {
+
+    const [stats, setStats] = useState({
+
+        totalTables: 0,
+
+        availableTables: 0,
+
+        reservations: 0
+
+    });
+
+    useEffect(() => {
+
+        const loadDashboard = async () => {
+
+            try {
+
+                const [
+
+                    tableResponse,
+
+                    reservationResponse
+
+                ] = await Promise.all([
+
+                    api.get("/admin/tables"),
+
+                    api.get("/admin/reservations")
+
+                ]);
+
+                const tables = tableResponse.data.tables;
+
+                const reservations = reservationResponse.data.reservations;
+
+                setStats({
+
+                    totalTables: tables.length,
+
+                    availableTables: tables.filter(
+
+                        table => table.status === "Available"
+
+                    ).length,
+
+                    reservations: reservations.length
+
+                });
+
+            }
+
+            catch (error) {
+
+                console.error(error);
+
+            }
+
+        };
+
+        loadDashboard();
+
+    }, []);
 
     return (
 
@@ -18,9 +92,17 @@ function DashboardCards() {
 
                 <FaUtensils />
 
-                <h2>20</h2>
+                <h2>
 
-                <p>Total Tables</p>
+                    {stats.totalTables}
+
+                </h2>
+
+                <p>
+
+                    Total Tables
+
+                </p>
 
             </div>
 
@@ -28,9 +110,17 @@ function DashboardCards() {
 
                 <FaCheckCircle />
 
-                <h2>14</h2>
+                <h2>
 
-                <p>Available Tables</p>
+                    {stats.availableTables}
+
+                </h2>
+
+                <p>
+
+                    Available Tables
+
+                </p>
 
             </div>
 
@@ -38,9 +128,17 @@ function DashboardCards() {
 
                 <FaCalendarAlt />
 
-                <h2>8</h2>
+                <h2>
 
-                <p>Reservations</p>
+                    {stats.reservations}
+
+                </h2>
+
+                <p>
+
+                    Reservations
+
+                </p>
 
             </div>
 

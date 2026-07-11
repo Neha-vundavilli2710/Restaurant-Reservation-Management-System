@@ -1,8 +1,91 @@
+import { useEffect, useState } from "react";
 import { FaEdit } from "react-icons/fa";
+
+import api from "../../services/api";
 
 import "./ReservationManagement.css";
 
 function ReservationManagement() {
+
+    const [reservations, setReservations] = useState([]);
+
+    const [loading, setLoading] = useState(true);
+
+    const fetchReservations = async () => {
+
+        try {
+
+            setLoading(true);
+
+            const response = await api.get("/admin/reservations");
+
+            setReservations(response.data.reservations);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            alert("Failed to load reservations.");
+
+        }
+
+        finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    useEffect(() => {
+
+        fetchReservations();
+
+    }, []);
+
+    const handleStatusUpdate = async (reservation) => {
+
+        const status = window.prompt(
+
+            "Enter Status (Confirmed or Cancelled)",
+
+            reservation.status
+
+        );
+
+        if (!status) return;
+
+        try {
+
+            await api.patch(
+
+                `/admin/reservations/${reservation._id}/status`,
+                {
+                    status
+                }
+            );
+
+            alert("Reservation Updated");
+
+            fetchReservations();
+
+        }
+
+        catch (error) {
+
+            alert(
+
+                error.response?.data?.message ||
+
+                "Unable to update reservation."
+
+            );
+
+        }
+
+    };
 
     return (
 
@@ -44,107 +127,129 @@ function ReservationManagement() {
 
                     <tbody>
 
-                        <tr>
+                        {
 
-                            <td>Neha</td>
+                            loading ?
 
-                            <td>Table 2</td>
+                                (
 
-                            <td>12 Jul 2026</td>
+                                    <tr>
 
-                            <td>7:00 PM</td>
+                                        <td colSpan="6">
 
-                            <td>
+                                            Loading...
 
-                                <span className="status pending">
+                                        </td>
 
-                                    Pending
+                                    </tr>
 
-                                </span>
+                                )
 
-                            </td>
+                                :
 
-                            <td>
+                                reservations.length === 0 ?
 
-                                <button className="update-btn">
+                                    (
 
-                                    <FaEdit />
+                                        <tr>
 
-                                    Update
+                                            <td colSpan="6">
 
-                                </button>
+                                                No Reservations Found
 
-                            </td>
+                                            </td>
 
-                        </tr>
+                                        </tr>
 
-                        <tr>
+                                    )
 
-                            <td>Rahul</td>
+                                    :
 
-                            <td>Table 4</td>
+                                    reservations.map((reservation) => (
 
-                            <td>13 Jul 2026</td>
+                                        <tr key={reservation._id}>
 
-                            <td>8:30 PM</td>
+                                            <td>
 
-                            <td>
+                                                {reservation.customer?.name}
 
-                                <span className="status confirmed">
+                                            </td>
 
-                                    Confirmed
+                                            <td>
 
-                                </span>
+                                                {reservation.table?.tableNumber}
 
-                            </td>
+                                            </td>
 
-                            <td>
+                                            <td>
 
-                                <button className="update-btn">
+                                                {
 
-                                    <FaEdit />
+                                                    new Date(
 
-                                    Update
+                                                        reservation.date
 
-                                </button>
+                                                    ).toLocaleDateString()
 
-                            </td>
+                                                }
 
-                        </tr>
+                                            </td>
 
-                        <tr>
+                                            <td>
 
-                            <td>Priya</td>
+                                                {reservation.time}
 
-                            <td>Table 1</td>
+                                            </td>
 
-                            <td>14 Jul 2026</td>
+                                            <td>
 
-                            <td>6:30 PM</td>
+                                                <span
 
-                            <td>
+                                                    className={
 
-                                <span className="status cancelled">
+                                                        reservation.status.toLowerCase() === "pending"
 
-                                    Cancelled
+                                                            ? "status pending"
 
-                                </span>
+                                                            : reservation.status.toLowerCase() === "confirmed"
 
-                            </td>
+                                                                ? "status confirmed"
 
-                            <td>
+                                                                : "status cancelled"
 
-                                <button className="update-btn">
+                                                    }
 
-                                    <FaEdit />
+                                                >
 
-                                    Update
+                                                    {reservation.status}
 
-                                </button>
+                                                </span>
 
-                            </td>
+                                            </td>
 
-                        </tr>
+                                            <td>
+
+                                                <button
+
+                                                    className="update-btn"
+
+                                                    onClick={() => handleStatusUpdate(reservation)}
+
+                                                >
+
+                                                    <FaEdit />
+
+                                                    Update
+
+                                                </button>
+
+                                            </td>
+
+                                        </tr>
+
+                                    ))
+
+                        }
 
                     </tbody>
 

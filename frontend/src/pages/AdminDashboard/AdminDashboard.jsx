@@ -1,3 +1,5 @@
+import { useRef } from "react";
+
 import Topbar from "../../components/admin/Topbar";
 import DashboardCards from "../../components/admin/DashboardCards";
 import TableManagement from "../../components/admin/TableManagement";
@@ -7,17 +9,35 @@ import "./AdminDashboard.css";
 
 function AdminDashboard() {
 
+    const dashboardRef = useRef(null);
+
+    const tablesRef = useRef(null);
+
+    const reservationsRef = useRef(null);
+
     return (
 
         <>
 
-            <Topbar />
+            <div ref={dashboardRef}>
 
-            <DashboardCards />
+                <Topbar />
 
-            <TableManagement />
+                <DashboardCards />
 
-            <ReservationManagement />
+            </div>
+
+            <div ref={tablesRef}>
+
+                <TableManagement />
+
+            </div>
+
+            <div ref={reservationsRef}>
+
+                <ReservationManagement />
+
+            </div>
 
         </>
 
