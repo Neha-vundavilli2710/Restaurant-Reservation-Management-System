@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom";
 
 import MainLayout from "../layouts/MainLayout";
+import AdminLayout from "../layouts/AdminLayout";
 
 import Home from "../pages/Home/Home";
 import Login from "../pages/Login/Login";
@@ -10,8 +11,12 @@ import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import NotFound from "../pages/NotFound/NotFound";
 
 const AppRouter = () => {
+
     return (
+
         <Routes>
+
+            {/* Public Pages */}
 
             <Route element={<MainLayout />}>
 
@@ -35,6 +40,12 @@ const AppRouter = () => {
                     element={<CustomerDashboard />}
                 />
 
+            </Route>
+
+            {/* Admin */}
+
+            <Route element={<AdminLayout />}>
+
                 <Route
                     path="/admin"
                     element={<AdminDashboard />}
@@ -48,7 +59,9 @@ const AppRouter = () => {
             />
 
         </Routes>
+
     );
+
 };
 
 export default AppRouter;

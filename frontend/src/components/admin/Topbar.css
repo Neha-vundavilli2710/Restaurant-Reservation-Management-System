@@ -1,0 +1,31 @@
+.topbar{
+
+    background:#fff;
+
+    border-radius:14px;
+
+    padding:18px 26px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+
+    margin-bottom:22px;
+
+}
+
+.topbar h1{
+
+    color:var(--primary-color);
+
+    font-size:1.7rem;
+
+    margin-bottom:6px;
+
+}
+
+.topbar p{
+
+    color:#666;
+
+    font-size:.9rem;
+
+}

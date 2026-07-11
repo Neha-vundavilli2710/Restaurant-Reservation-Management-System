@@ -1,0 +1,131 @@
+.reservation-management{
+
+    background:white;
+
+    border-radius:14px;
+
+    padding:18px;
+
+    box-shadow:0 6px 18px rgba(0,0,0,.06);
+
+}
+
+.reservation-header{
+
+    margin-bottom:18px;
+
+}
+
+.reservation-header h2{
+
+    color:var(--primary-color);
+
+    font-size:1.55rem;
+
+}
+
+.reservation-wrapper{
+
+    overflow-x:auto;
+
+}
+
+.reservation-wrapper table{
+
+    width:100%;
+
+    border-collapse:collapse;
+
+}
+
+.reservation-wrapper thead{
+
+    background:#f5f5f5;
+
+}
+
+.reservation-wrapper th{
+
+    padding:13px;
+
+    text-align:left;
+
+    color:#444;
+
+}
+
+.reservation-wrapper td{
+
+    padding:13px;
+
+    border-top:1px solid #eee;
+
+}
+
+.status{
+
+    padding:5px 12px;
+
+    border-radius:18px;
+
+    font-size:.82rem;
+
+    font-weight:600;
+
+}
+
+.pending{
+
+    background:#fff4d6;
+
+    color:#d48806;
+
+}
+
+.confirmed{
+
+    background:#eaf8ee;
+
+    color:#198754;
+
+}
+
+.cancelled{
+
+    background:#fdecec;
+
+    color:#dc3545;
+
+}
+
+.update-btn{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:6px;
+
+    background:var(--primary-color);
+
+    color:white;
+
+    border:none;
+
+    padding:8px 14px;
+
+    border-radius:8px;
+
+    cursor:pointer;
+
+    font-size:.85rem;
+
+    transition:.3s;
+
+}
+
+.update-btn:hover{
+
+    opacity:.9;
+
+}
