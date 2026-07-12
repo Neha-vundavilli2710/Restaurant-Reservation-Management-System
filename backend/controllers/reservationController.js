@@ -6,6 +6,8 @@ const createReservation = async (req, res) => {
 
         const {
 
+            tableId,
+
             reservationDate,
 
             timeSlot,
@@ -18,6 +20,8 @@ const createReservation = async (req, res) => {
             await reservationService.createReservation({
 
                 customer: req.user._id,
+
+                tableId,
 
                 reservationDate,
 

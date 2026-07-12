@@ -6,44 +6,85 @@ const createReservation = async (reservationData) => {
 
     const {
         customer,
+        tableId,
         reservationDate,
         timeSlot,
         guests
     } = reservationData;
 
-    const suitableTables = await Table.find({
-        isActive: true,
-        capacity: { $gte: guests }
-    }).sort({ capacity: 1 });
-
-    if (suitableTables.length === 0) {
-        throw new Error(
-            "No table can accommodate the requested number of guests."
-        );
-    }
-
     let assignedTable = null;
 
-    for (const table of suitableTables) {
+    if (tableId) {
 
-        const existingReservation = await Reservation.findOne({
-            table: table._id,
+        // Customer picked a specific table in the UI - honor that choice
+        // instead of silently swapping it for a different one.
+        const requestedTable = await Table.findOne({
+            _id: tableId,
+            isActive: true
+        });
+
+        if (!requestedTable) {
+            throw new Error("The selected table is not available.");
+        }
+
+        if (requestedTable.capacity < guests) {
+            throw new Error(
+                "The selected table does not have enough seats for this many guests."
+            );
+        }
+
+        const conflict = await Reservation.findOne({
+            table: requestedTable._id,
             reservationDate: new Date(reservationDate),
             timeSlot,
             status: "confirmed"
         });
 
-        if (!existingReservation) {
-            assignedTable = table;
-            break;
+        if (conflict) {
+            throw new Error(
+                "This table is already booked for the selected date and time slot."
+            );
         }
 
-    }
+        assignedTable = requestedTable;
 
-    if (!assignedTable) {
-        throw new Error(
-            "No tables are available for the selected date and time slot."
-        );
+    } else {
+
+        // No specific table requested - fall back to auto-assigning the
+        // smallest suitable table that's free.
+        const suitableTables = await Table.find({
+            isActive: true,
+            capacity: { $gte: guests }
+        }).sort({ capacity: 1 });
+
+        if (suitableTables.length === 0) {
+            throw new Error(
+                "No table can accommodate the requested number of guests."
+            );
+        }
+
+        for (const table of suitableTables) {
+
+            const existingReservation = await Reservation.findOne({
+                table: table._id,
+                reservationDate: new Date(reservationDate),
+                timeSlot,
+                status: "confirmed"
+            });
+
+            if (!existingReservation) {
+                assignedTable = table;
+                break;
+            }
+
+        }
+
+        if (!assignedTable) {
+            throw new Error(
+                "No tables are available for the selected date and time slot."
+            );
+        }
+
     }
 
     const reservation = await Reservation.create({

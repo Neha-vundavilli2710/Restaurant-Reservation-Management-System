@@ -35,6 +35,8 @@ function ReserveModal({
 
             await api.post("/reservations", {
 
+                tableId: table._id,
+
                 reservationDate,
 
                 timeSlot,
