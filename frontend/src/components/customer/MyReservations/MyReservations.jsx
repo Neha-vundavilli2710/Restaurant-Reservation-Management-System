@@ -1,4 +1,5 @@
 import { FaChair, FaCalendarAlt, FaClock } from "react-icons/fa";
+import toast from "react-hot-toast";
 import api from "../../../services/api";
 
 function MyReservations({
