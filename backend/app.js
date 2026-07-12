@@ -14,7 +14,8 @@ app.use((req, res, next) => {
 
 app.use(cors({
     origin: [
-        "http://localhost:5173"
+        "http://localhost:5173",
+        "https://restaurant-reservation-management-system-525b.onrender.com/"
     ],
     credentials: true
 }));
