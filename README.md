@@ -4,8 +4,9 @@
 A full-stack restaurant table reservation system with separate customer and
 administrator experiences, built as part of a technical assignment.
 
-**Live demo:** https://restaurant-reservation-management-s-lilac.vercel.app/
-**Backend API:** https://restaurant-reservation-backend-jyqy.onrender.com
+**Live demo:** https://restaurant-reservation-management-s-chi.vercel.app/
+**Backend API:** https://restaurant-reservation-management-system-rrd8.onrender.com/
+**API Base URL:** https://restaurant-reservation-management-system-rrd8.onrender.com/api
 
 > Note: the backend is hosted on Render's free tier, so the very first
 > request after a period of inactivity can take 30-60 seconds while the
