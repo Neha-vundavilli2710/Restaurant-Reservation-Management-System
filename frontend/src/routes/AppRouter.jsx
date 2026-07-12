@@ -8,7 +8,7 @@ import Login from "../pages/Login/Login";
 import Register from "../pages/Register/Register";
 import CustomerDashboard from "../pages/CustomerDashboard/CustomerDashboard";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
-import NotFound from "../pages/NotFound/NotFound";
+
 
 import ProtectedRoute from "../routes/ProtectedRoute";
 
@@ -71,10 +71,6 @@ const AppRouter = () => {
 
             </Route>
 
-            <Route
-                path="*"
-                element={<NotFound />}
-            />
 
         </Routes>
 
