@@ -7,7 +7,17 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
-app.use(cors());
+const cors = require("cors");
+
+app.use(cors({
+    origin: [
+        "http://localhost:5173",
+        "https://restaurant-reservation-management-s-lilac.vercel.app"
+    ],
+    credentials: true
+}));
+
+app.options("*", cors());
 
 app.use(express.json());
 
