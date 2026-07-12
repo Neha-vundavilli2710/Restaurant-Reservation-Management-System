@@ -13,10 +13,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-    origin: [
-        "http://localhost:5173",
-        "https://restaurant-reservation-management-system-rrd8.onrender.com/api"
-    ],
+    origin: true,
     credentials: true
 }));
 
