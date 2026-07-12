@@ -7,8 +7,6 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
-const cors = require("cors");
-
 app.use(cors({
     origin: [
         "http://localhost:5173",
@@ -21,17 +19,15 @@ app.options("*", cors());
 
 app.use(express.json());
 
-
-
 app.get("/", (req, res) => {
     res.json({
+        success: true,
         message: "Restaurant Reservation API is running."
     });
 });
 
-
-
 app.use("/api/auth", authRoutes);
 app.use("/api/reservations", reservationRoutes);
 app.use("/api/admin", adminRoutes);
+
 module.exports = app;
