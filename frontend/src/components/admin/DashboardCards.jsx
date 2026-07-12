@@ -118,7 +118,7 @@ function DashboardCards() {
 
                 <p>
 
-                    Available Tables
+                    Active Tables
 
                 </p>
 

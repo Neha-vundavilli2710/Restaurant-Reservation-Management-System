@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaPlus, FaEdit, FaTrash } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import api from "../../services/api";
 
@@ -36,7 +37,7 @@ function TableManagement() {
 
             console.error(error);
 
-            alert("Failed to load tables.");
+            toast.error("Failed to load tables.");
 
         }
 
@@ -66,7 +67,7 @@ function TableManagement() {
 
             await api.delete(`/admin/tables/${id}`);
 
-            alert("Table deleted successfully.");
+            toast.success("Table Deleted Successfully");
 
             fetchTables();
 
@@ -74,10 +75,7 @@ function TableManagement() {
 
         catch (error) {
 
-            alert(
-                error.response?.data?.message ||
-                "Unable to delete table."
-            );
+            toast.error("Unable to delete table.");
 
         }
 

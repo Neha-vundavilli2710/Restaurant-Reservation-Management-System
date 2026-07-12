@@ -12,6 +12,7 @@ const {
 
     // Reservation Management
     getAllReservations,
+    getReservationsByDate,
     updateReservationStatus
 } = require("../controllers/adminController");
 
@@ -65,6 +66,20 @@ router.get(
     adminOnly,
     getAllReservations
 );
+
+
+router.get(
+
+    "/reservations/date",
+
+    protect,
+
+    adminOnly,
+
+    getReservationsByDate
+
+);
+
 
 // Update Reservation Status
 router.patch(

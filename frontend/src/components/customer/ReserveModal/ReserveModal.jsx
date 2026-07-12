@@ -42,7 +42,7 @@ function ReserveModal({
 
             });
 
-            alert("Reservation Created Successfully.");
+            toast.success("Reservation Created Successfully");
 
             refreshDashboard();
 
@@ -50,7 +50,7 @@ function ReserveModal({
 
         } catch (error) {
 
-            alert(
+            toast.error(
 
                 error.response?.data?.message ||
 

@@ -10,6 +10,8 @@ import CustomerDashboard from "../pages/CustomerDashboard/CustomerDashboard";
 import AdminDashboard from "../pages/AdminDashboard/AdminDashboard";
 import NotFound from "../pages/NotFound/NotFound";
 
+import ProtectedRoute from "../routes/ProtectedRoute";
+
 const AppRouter = () => {
 
     return (
@@ -37,7 +39,15 @@ const AppRouter = () => {
 
                 <Route
                     path="/dashboard"
-                    element={<CustomerDashboard />}
+                    element={
+
+                        <ProtectedRoute role="customer">
+
+                            <CustomerDashboard />
+
+                        </ProtectedRoute>
+
+                    }
                 />
 
             </Route>
@@ -48,7 +58,15 @@ const AppRouter = () => {
 
                 <Route
                     path="/admin"
-                    element={<AdminDashboard />}
+                    element={
+
+                        <ProtectedRoute role="admin">
+
+                            <AdminDashboard />
+
+                        </ProtectedRoute>
+
+                    }
                 />
 
             </Route>

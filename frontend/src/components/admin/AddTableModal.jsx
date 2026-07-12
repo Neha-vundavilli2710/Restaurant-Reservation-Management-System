@@ -1,6 +1,7 @@
 import { useState } from "react";
 import api from "../../services/api";
 import "./AddTableModal.css";
+import toast from "react-hot-toast";
 
 function AddTableModal({ closeModal, refreshTables }) {
 
@@ -21,7 +22,7 @@ function AddTableModal({ closeModal, refreshTables }) {
                 capacity: Number(capacity)
             });
 
-            alert("Table Added Successfully");
+            toast.success("Table Added Successfully");
 
             refreshTables();
 
@@ -29,7 +30,7 @@ function AddTableModal({ closeModal, refreshTables }) {
 
         } catch (error) {
 
-            alert(
+            toast.error(
                 error.response?.data?.message ||
                 "Unable to add table."
             );

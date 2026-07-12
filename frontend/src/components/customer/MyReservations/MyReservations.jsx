@@ -1,5 +1,4 @@
 import { FaChair, FaCalendarAlt, FaClock } from "react-icons/fa";
-
 import api from "../../../services/api";
 
 function MyReservations({
@@ -22,7 +21,7 @@ function MyReservations({
 
             await api.patch(`/reservations/${id}/cancel`);
 
-            alert("Reservation cancelled successfully.");
+            toast.success("Reservation cancelled successfully.");
 
             refreshDashboard();
 
@@ -30,7 +29,7 @@ function MyReservations({
 
         catch (error) {
 
-            alert(
+            toast.error(
 
                 error.response?.data?.message ||
 
@@ -86,7 +85,13 @@ function MyReservations({
 
                             <h3>
 
-                                {reservation.table.tableNumber}
+                                {
+
+                                    reservation.table?.tableNumber ||
+
+                                    "Table Deleted"
+
+                                }
 
                             </h3>
 
@@ -110,7 +115,11 @@ function MyReservations({
 
                                 <span>
 
-                                    {reservation.guests} Guests
+                                    {
+
+                                        reservation.guests
+
+                                    } Guests
 
                                 </span>
 
@@ -124,11 +133,19 @@ function MyReservations({
 
                                     {
 
+                                        reservation.reservationDate
+
+                                        ?
+
                                         new Date(
 
                                             reservation.reservationDate
 
-                                        ).toLocaleDateString()
+                                        ).toLocaleDateString("en-GB")
+
+                                        :
+
+                                        "--"
 
                                     }
 
@@ -142,7 +159,13 @@ function MyReservations({
 
                                 <span>
 
-                                    {reservation.timeSlot}
+                                    {
+
+                                        reservation.timeSlot ||
+
+                                        "--"
+
+                                    }
 
                                 </span>
 

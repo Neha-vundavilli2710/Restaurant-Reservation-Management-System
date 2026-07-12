@@ -4,6 +4,8 @@ import api from "../../services/api";
 
 import "./EditTableModal.css";
 
+import toast from "react-hot-toast";
+
 function EditTableModal({
 
     table,
@@ -34,13 +36,13 @@ function EditTableModal({
 
                 tableNumber,
 
-                capacity,
+                capacity: Number(capacity),
 
                 status
 
             });
 
-            alert("Table Updated Successfully");
+            toast.success("Table Updated Successfully");
 
             refreshTables();
 
@@ -50,7 +52,7 @@ function EditTableModal({
 
         catch (error) {
 
-            alert(
+            toast.error(
 
                 error.response?.data?.message ||
 

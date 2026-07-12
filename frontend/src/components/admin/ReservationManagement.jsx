@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { FaEdit } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import api from "../../services/api";
 
@@ -8,8 +8,8 @@ import "./ReservationManagement.css";
 function ReservationManagement() {
 
     const [reservations, setReservations] = useState([]);
-
     const [loading, setLoading] = useState(true);
+    const [selectedDate, setSelectedDate] = useState("");
 
     const fetchReservations = async () => {
 
@@ -27,7 +27,45 @@ function ReservationManagement() {
 
             console.error(error);
 
-            alert("Failed to load reservations.");
+            toast.error("Failed to load reservations.");
+
+        }
+
+        finally {
+
+            setLoading(false);
+
+        }
+
+    };
+
+    const filterReservationsByDate = async () => {
+
+        if (!selectedDate) {
+
+            fetchReservations();
+
+            return;
+
+        }
+
+        try {
+
+            setLoading(true);
+
+            const response = await api.get(
+                `/admin/reservations/date?date=${selectedDate}`
+            );
+
+            setReservations(response.data.reservations);
+
+        }
+
+        catch (error) {
+
+            console.error(error);
+
+            toast.error("Unable to fetch reservations.");
 
         }
 
@@ -45,29 +83,23 @@ function ReservationManagement() {
 
     }, []);
 
-    const handleStatusUpdate = async (reservation) => {
-
-        const status = window.prompt(
-
-            "Enter Status (Confirmed or Cancelled)",
-
-            reservation.status
-
-        );
-
-        if (!status) return;
+    const handleStatusUpdate = async (reservationId, status) => {
 
         try {
 
             await api.patch(
 
-                `/admin/reservations/${reservation._id}/status`,
+                `/admin/reservations/${reservationId}/status`,
+
                 {
+
                     status
+
                 }
+
             );
 
-            alert("Reservation Updated");
+            toast.success("Reservation Updated Successfully.");
 
             fetchReservations();
 
@@ -75,7 +107,7 @@ function ReservationManagement() {
 
         catch (error) {
 
-            alert(
+            toast.error(
 
                 error.response?.data?.message ||
 
@@ -99,6 +131,54 @@ function ReservationManagement() {
 
                 </h2>
 
+                <div className="reservation-filter">
+
+                    <input
+
+                        type="date"
+
+                        value={selectedDate}
+
+                        onChange={(e) =>
+
+                            setSelectedDate(e.target.value)
+
+                        }
+
+                    />
+
+                    <button
+
+                        className="update-btn"
+
+                        onClick={filterReservationsByDate}
+
+                    >
+
+                        Filter
+
+                    </button>
+
+                    <button
+
+                        className="update-btn"
+
+                        onClick={() => {
+
+                            setSelectedDate("");
+
+                            fetchReservations();
+
+                        }}
+
+                    >
+
+                        Show All
+
+                    </button>
+
+                </div>
+
             </div>
 
             <div className="reservation-wrapper">
@@ -110,16 +190,12 @@ function ReservationManagement() {
                         <tr>
 
                             <th>Customer</th>
-
                             <th>Table</th>
-
                             <th>Date</th>
-
-                            <th>Time</th>
-
+                            <th>Time Slot</th>
+                            <th>Guests</th>
                             <th>Status</th>
-
-                            <th>Action</th>
+                            <th>Update Status</th>
 
                         </tr>
 
@@ -135,7 +211,7 @@ function ReservationManagement() {
 
                                     <tr>
 
-                                        <td colSpan="6">
+                                        <td colSpan="7">
 
                                             Loading...
 
@@ -153,7 +229,7 @@ function ReservationManagement() {
 
                                         <tr>
 
-                                            <td colSpan="6">
+                                            <td colSpan="7">
 
                                                 No Reservations Found
 
@@ -171,13 +247,13 @@ function ReservationManagement() {
 
                                             <td>
 
-                                                {reservation.customer?.name}
+                                                {reservation.customer?.name || "N/A"}
 
                                             </td>
 
                                             <td>
 
-                                                {reservation.table?.tableNumber}
+                                                {reservation.table?.tableNumber || "Deleted"}
 
                                             </td>
 
@@ -185,11 +261,19 @@ function ReservationManagement() {
 
                                                 {
 
-                                                    new Date(
+                                                    reservation.reservationDate
 
-                                                        reservation.date
+                                                        ?
 
-                                                    ).toLocaleDateString()
+                                                        new Date(
+
+                                                            reservation.reservationDate
+
+                                                        ).toLocaleDateString("en-GB")
+
+                                                        :
+
+                                                        "--"
 
                                                 }
 
@@ -197,7 +281,13 @@ function ReservationManagement() {
 
                                             <td>
 
-                                                {reservation.time}
+                                                {reservation.timeSlot || "--"}
+
+                                            </td>
+
+                                            <td>
+
+                                                {reservation.guests}
 
                                             </td>
 
@@ -207,21 +297,27 @@ function ReservationManagement() {
 
                                                     className={
 
-                                                        reservation.status.toLowerCase() === "pending"
+                                                        reservation.status === "confirmed"
 
-                                                            ? "status pending"
+                                                            ?
 
-                                                            : reservation.status.toLowerCase() === "confirmed"
+                                                            "status confirmed"
 
-                                                                ? "status confirmed"
+                                                            :
 
-                                                                : "status cancelled"
+                                                            "status cancelled"
 
                                                     }
 
                                                 >
 
-                                                    {reservation.status}
+                                                    {
+
+                                                        reservation.status.charAt(0).toUpperCase() +
+
+                                                        reservation.status.slice(1)
+
+                                                    }
 
                                                 </span>
 
@@ -229,19 +325,39 @@ function ReservationManagement() {
 
                                             <td>
 
-                                                <button
+                                                <select
 
-                                                    className="update-btn"
+                                                    className="status-select"
 
-                                                    onClick={() => handleStatusUpdate(reservation)}
+                                                    value={reservation.status}
+
+                                                    onChange={(e) =>
+
+                                                        handleStatusUpdate(
+
+                                                            reservation._id,
+
+                                                            e.target.value
+
+                                                        )
+
+                                                    }
 
                                                 >
 
-                                                    <FaEdit />
+                                                    <option value="confirmed">
 
-                                                    Update
+                                                        Confirmed
 
-                                                </button>
+                                                    </option>
+
+                                                    <option value="cancelled">
+
+                                                        Cancelled
+
+                                                    </option>
+
+                                                </select>
 
                                             </td>
 

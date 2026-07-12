@@ -225,6 +225,80 @@ const getAllReservations = async (req, res) => {
 
 };
 
+const getReservationsByDate = async (req, res) => {
+
+    try {
+
+        const { date } = req.query;
+
+        if (!date) {
+
+            return res.status(400).json({
+
+                success: false,
+
+                message: "Date is required."
+
+            });
+
+        }
+
+        const startDate = new Date(date);
+
+        startDate.setHours(0, 0, 0, 0);
+
+        const endDate = new Date(date);
+
+        endDate.setHours(23, 59, 59, 999);
+
+        const reservations = await Reservation.find({
+
+            reservationDate: {
+
+                $gte: startDate,
+
+                $lte: endDate
+
+            }
+
+        })
+
+        .populate("customer", "name email")
+
+        .populate("table", "tableNumber capacity")
+
+        .sort({
+
+            reservationDate: 1
+
+        });
+
+        res.status(200).json({
+
+            success: true,
+
+            count: reservations.length,
+
+            reservations
+
+        });
+
+    }
+
+    catch (error) {
+
+        res.status(500).json({
+
+            success: false,
+
+            message: error.message
+
+        });
+
+    }
+
+};
+
 
 // Update Reservation Status
 const updateReservationStatus = async (req, res) => {
@@ -300,6 +374,7 @@ module.exports = {
 
     // Reservation APIs
     getAllReservations,
+    getReservationsByDate,
     updateReservationStatus
 
 };
