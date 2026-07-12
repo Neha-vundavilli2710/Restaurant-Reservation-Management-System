@@ -7,6 +7,11 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
+app.use((req, res, next) => {
+    console.log(`${req.method} ${req.originalUrl}`);
+    next();
+});
+
 app.use(cors({
     origin: [
         "http://localhost:5173",
@@ -14,8 +19,6 @@ app.use(cors({
     ],
     credentials: true
 }));
-
-app.options("*", cors());
 
 app.use(express.json());
 
