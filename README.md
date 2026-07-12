@@ -175,6 +175,7 @@ Two roles: `customer` and `admin`, stored on the `User` model.
 - **No pagination:** admin "all reservations" and "all tables" endpoints return the full collection. Fine at assignment scale; would need pagination for a real high-volume restaurant.
 - **No email/SMS confirmations:** intentionally out of scope per the assignment notes.
 - **Render free-tier cold starts:** the backend spins down after inactivity, so the first request after idle time is noticeably slower.
+- **"Available Tables" list isn't date/time-aware:** the table grid shown to customers displays all active tables as available, without filtering by the date and time slot they haven't chosen yet (that's picked inside the reservation modal, after selecting a table). The backend still correctly validates and rejects a conflicting booking on submission, so no double-booking can actually occur — but the customer doesn't see true real-time availability before clicking Reserve. With more time, the date/time picker would move above the table list, and the table grid would refresh to show only tables genuinely free for that slot.
 
 ---
 
